@@ -12,7 +12,7 @@ from tkinter import ttk
 
 #Author：Haohua Zheng
 
-openai.api_key = "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"
+openai.api_key = "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"
 
 pygame.mixer.init(buffer=512)
 
@@ -31,7 +31,7 @@ def record_audio():
         print("抱歉，我没听清楚。")
         return None
 
-def record_audio_en():
+def record_audio_es():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
         print("Please speak...")
@@ -39,7 +39,7 @@ def record_audio_en():
         print("Done")
 
     try:
-        text = recognizer.recognize_google(audio, language='zh-CN')
+        text = recognizer.recognize_google(audio, language='es')
         print(f"You: {text}")
         return text
     except Exception as e:
@@ -49,8 +49,8 @@ def record_audio_en():
 def ask_gpt(text):
     response = openai.Completion.create(
         engine="text-davinci-003", 
-        prompt="请有礼貌和有意识回答下面的问题, " + text + "? ", 
-        max_tokens=50, 
+        prompt="请有礼貌和有意识将后面双引号里的中文翻译成波多黎各使用的西班牙语并且回答中不要出现任何中文“" + text + "” ", 
+        max_tokens=200, 
         n=1, 
         stop=None, 
         temperature=0.8
@@ -58,11 +58,11 @@ def ask_gpt(text):
 
     return response.choices[0].text.strip()
 
-def ask_gpt_en(text):
+def ask_gpt_es(text):
     response = openai.Completion.create(
         engine="text-davinci-003", 
-        prompt="Please answer the following question with politeness and awareness. " + text + "? ", 
-        max_tokens=50, 
+        prompt="Por favor, traduce cortésmente y conscientemente el español de Puerto Rico en las comillas dobles al chino, y asegúrate de que no haya términos en español en la respuesta “" + text + "”", 
+        max_tokens=200, 
         n=1, 
         stop=None, 
         temperature=0.8
@@ -78,18 +78,18 @@ def on_start_click(event):
     if text:
         response = ask_gpt(text)
         print(f"GPT: {response}")
-        tts = gTTS(response, lang='zh-CN')
+        tts = gTTS(response, lang='es')
         tts.save("response.mp3")
 
-def on_start_click_en(event):
+def on_start_click_es(event):
     pygame.mixer.music.stop()
     window.unbind('<ButtonPress-1>')
     window.bind('<ButtonRelease-1>', on_stop_click)
-    text = record_audio_en()
+    text = record_audio_es()
     if text:
-        response = ask_gpt(text)
+        response = ask_gpt_es(text)
         print(f"GPT: {response}")
-        tts = gTTS(response, lang='en')
+        tts = gTTS(response, lang='zh-CN')
         tts.save("response.mp3")
 
 def play_response(file):
@@ -105,13 +105,6 @@ def on_stop_click(event):
 def on_interrupt_click():
     pygame.mixer.music.stop()
 
-def play_audio(text):
-    tts = gTTS(text, lang='zh-cn')
-    with tempfile.NamedTemporaryFile(mode="w+b", suffix=".mp3", delete=False) as f:
-        tts.save(f.name)
-        pygame.mixer.music.load(f.name)
-        pygame.mixer.music.play()
-
 window = tk.Tk()
 window.geometry("400x200")
 window.title("语音问答")
@@ -119,16 +112,16 @@ window.title("语音问答")
 mic_button = tk.Canvas(window, width=100, height=100)
 mic_button.pack(side=tk.LEFT, padx=10, pady=10)
 mic_button.create_oval(10, 10, 90, 90, fill='red')
-mic_button.create_text(50, 50, text="中文", fill='white', font=("Helvetica", 12))
+mic_button.create_text(50, 50, text="中文 -> 西班牙语", fill='white', font=("Helvetica", 12))
 mic_button.bind('<ButtonPress-1>', on_start_click)
 
 mic_button_en = tk.Canvas(window, width=100, height=100)
 mic_button_en.pack(side=tk.LEFT, padx=10, pady=10)
 mic_button_en.create_oval(10, 10, 90, 90, fill='blue')
-mic_button_en.create_text(50, 50, text="English", fill='white', font=("Helvetica", 12))
-mic_button_en.bind('<ButtonPress-1>', on_start_click_en)
+mic_button_en.create_text(50, 50, text="Spanish\n-> Chinese", fill='white', font=("Helvetica", 12))
+mic_button_en.bind('<ButtonPress-1>', on_start_click_es)
 
 interrupt_button = tk.Button(window, text="Stop Play", command=on_interrupt_click)
 interrupt_button.pack(pady=10)
 
-window.mainloop()
+window.mainloop
