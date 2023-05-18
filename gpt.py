@@ -12,9 +12,9 @@ from tkinter import ttk
 
 #Author：Haohua Zheng
 
-openai.api_key = "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"
+openai.api_key = "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"
 
-pygame.mixer.init(buffer=512)
+pygame.mixer.init(buffer=512)            
 
 def record_audio():
     recognizer = sr.Recognizer()
@@ -39,7 +39,7 @@ def record_audio_en():
         print("Done")
 
     try:
-        text = recognizer.recognize_google(audio, language='zh-CN')
+        text = recognizer.recognize_google(audio, language='en')
         print(f"You: {text}")
         return text
     except Exception as e:
@@ -50,7 +50,7 @@ def ask_gpt(text):
     response = openai.Completion.create(
         engine="text-davinci-003", 
         prompt="请有礼貌和有意识回答下面的问题, " + text + "? ", 
-        max_tokens=50, 
+        max_tokens=1000, 
         n=1, 
         stop=None, 
         temperature=0.8
@@ -61,8 +61,9 @@ def ask_gpt(text):
 def ask_gpt_en(text):
     response = openai.Completion.create(
         engine="text-davinci-003", 
-        prompt="Please answer the following question with politeness and awareness. " + text + "? ", 
-        max_tokens=50, 
+        #Please answer the following question with politeness and awareness. 
+        prompt=text + "? ", 
+        max_tokens=1000, 
         n=1, 
         stop=None, 
         temperature=0.8
@@ -131,4 +132,4 @@ mic_button_en.bind('<ButtonPress-1>', on_start_click_en)
 interrupt_button = tk.Button(window, text="Stop Play", command=on_interrupt_click)
 interrupt_button.pack(pady=10)
 
-window.mainloop()
+window.mainloop() 
