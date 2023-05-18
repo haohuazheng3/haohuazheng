@@ -14,7 +14,7 @@ from tkinter import ttk
 
 openai.api_key = "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"
 
-pygame.mixer.init(buffer=512)            
+pygame.mixer.init(buffer=512)       
 
 def record_audio():
     recognizer = sr.Recognizer()
@@ -47,29 +47,35 @@ def record_audio_en():
         return None
 
 def ask_gpt(text):
-    response = openai.Completion.create(
-        engine="text-davinci-003", 
-        prompt="请有礼貌和有意识回答下面的问题, " + text + "? ", 
+    response = openai.ChatCompletion.create(
+        model="gpt-4", 
+        messages=[
+            {"role": "system", "content": "你是一个友好、知识渊博的助手，会用中文回答问题。"},
+            {"role": "user", "content": text}
+        ], 
         max_tokens=1000, 
         n=1, 
         stop=None, 
         temperature=0.8
     )
 
-    return response.choices[0].text.strip()
+    return response.choices[0].message['content']
 
 def ask_gpt_en(text):
-    response = openai.Completion.create(
-        engine="text-davinci-003", 
-        #Please answer the following question with politeness and awareness. 
-        prompt=text + "? ", 
+    response = openai.ChatCompletion.create(
+        model="gpt-4", 
+        messages=[
+            {"role": "system", "content": "You are a helpful and knowledgeable assistant, who answers questions in English."},
+            {"role": "user", "content": text}
+        ], 
         max_tokens=1000, 
         n=1, 
         stop=None, 
         temperature=0.8
     )
 
-    return response.choices[0].text.strip()
+    return response.choices[0].message['content']
+
 
 def on_start_click(event):
     pygame.mixer.music.stop()
